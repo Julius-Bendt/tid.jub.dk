@@ -25,8 +25,7 @@
   background-color: #ecf0f1;
 }
 
-/* @font-face {
-  font-family: "Inter";
-  src: url("../../public/assets/font/Inter-Regular.ttf");
-  font-display: swap;
-} */
+.v-toast__item--info {
+  background-color: #6366f1 !important;
+  color: #f3f4f6 !important;
+}

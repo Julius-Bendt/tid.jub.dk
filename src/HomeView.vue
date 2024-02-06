@@ -1,7 +1,10 @@
 <template>
   <div class="p-4 h-screen w-screen bg-background text-text">
-    <div>
+    <div class="flex justify-between">
       <h1 class="text-xl font-bold">Hjælper til tidsregistrering</h1>
+      <a href="https://github.com/Julius-Bendt/tid.jub.dk" class="text-primary" target="_blank">
+        Github repository
+      </a>
     </div>
     <main class="grid grid-cols-2 mt-2 gap-4">
       <div>
@@ -24,17 +27,11 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
       </div>
       <div>
         <h2 class="text-lg font-bold mb-2">Formatteret</h2>
+        <div v-if="errors.length == 0">
+          <p class="font-bold pt-3">Total: {{ calculateTotalTime(registrationsArray) }}</p>
+          <RegistrationTable v-if="errors.length == 0" :registrations="registrationsArray" />
+        </div>
 
-        <ul v-if="errors.length == 0">
-          <li class="font-bold pt-3">Total: {{ calculateTotalTime() }}</li>
-          <!-- <li v-for="(registration, key) in registrationsArray" :key="key">
-            {{ registration.letter }}: {{ calculateTotalTimeForRegistration(registration) / 60 }} -
-            <span class="cursor-pointer" @click="copyToClipboard(registration.description)">{{
-              registration.description
-            }}</span>
-          </li> -->
-          <RegistrationTable :registrations="registrationsArray" />
-        </ul>
         <ul v-else>
           <li v-for="(error, i) in errors" :key="i">
             {{ error }}
@@ -46,14 +43,27 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import type { IRegistration, ITimeRange } from '@/interfaces'
-import { extractWithDescription, extractFromId, checkForOverlap } from '@/helpers'
-import { useToast } from 'vue-toast-notification';
+import {
+  extractWithDescription,
+  extractFromId,
+  checkForOverlap,
+  calculateTotalTime,
+  loadFromStorage,
+  saveToStorage
+} from '@/helpers'
 
 import RegistrationTable from '@/components/RegistrationTable.vue'
 
-const registrationsText = ref('') // The panel to the left
+const registrationsText = ref(loadFromStorage()) // The panel to the left
+// If any string was found in the cache, format it
+if (registrationsText.value != '') {
+  nextTick(() => {
+    formatRegistrationsCallback()
+  })
+}
+
 const formattedRegistrations = ref<Map<string, IRegistration>>(new Map())
 const errors = ref<string[]>([])
 
@@ -73,6 +83,7 @@ function formatRegistrationsCallback() {
 
   // Remove duplicate errors
   errors.value = errors.value.filter((error, index, self) => self.indexOf(error) === index)
+  saveToStorage(registrationsText.value)
 }
 
 // Function to format registrations from an array of input strings
@@ -141,29 +152,5 @@ function setOrAddRegistration(input: IRegistration) {
     timeRanges: timeRanges,
     description: description
   } as IRegistration)
-}
-
-// Function to calculate the total duration of a registration
-function calculateTotalTimeForRegistration(registration: IRegistration): number {
-  return registration.timeRanges.reduce((result, current) => {
-    return result + current.duration
-  }, 0)
-}
-
-function calculateTotalTime() {
-  return (
-    registrationsArray.value.reduce(
-      (result, current) => result + calculateTotalTimeForRegistration(current),
-      0
-    ) / 60
-  )
-}
-
-// Function to copy a string to the clipboard and display an alert
-function copyToClipboard(input: string) {
-  navigator.clipboard.writeText(input);
-  const $toast = useToast();
-  $toast.clear();
-  $toast.info('Copied ' + input);
 }
 </script>
