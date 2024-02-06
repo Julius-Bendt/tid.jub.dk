@@ -32,6 +32,9 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
               registration.description
             }}</span>
           </li>
+          <li class="font-bold pt-3">
+            Total: {{ registrationsArray.reduce((result, current) => result + calculateTotalTime(current), 0) / 60 }}
+          </li>
         </ul>
         <ul v-else>
           <li v-for="(error, i) in errors" :key="i">
