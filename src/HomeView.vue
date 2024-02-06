@@ -49,6 +49,7 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
 import { ref, computed } from 'vue'
 import type { IRegistration, ITimeRange } from '@/interfaces'
 import { extractWithDescription, extractFromId, checkForOverlap } from '@/helpers'
+import { useToast } from 'vue-toast-notification';
 
 import RegistrationTable from '@/components/RegistrationTable.vue'
 
@@ -160,7 +161,9 @@ function calculateTotalTime() {
 
 // Function to copy a string to the clipboard and display an alert
 function copyToClipboard(input: string) {
-  navigator.clipboard.writeText(input)
-  alert('Copied ' + input)
+  navigator.clipboard.writeText(input);
+  const $toast = useToast();
+  $toast.clear();
+  $toast.info('Copied ' + input);
 }
 </script>
