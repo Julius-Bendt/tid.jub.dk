@@ -17,6 +17,10 @@ export function parseTimeRange(input: string): ITimeRange | string {
         return durationResult;
     }
 
+    if (15 % durationResult == 0) {
+        return `${time} is not rounded to the nearest quarter`;
+    }
+
     // Return an object with parsed time range information
     return { startTime: startTime, endTime: endTime, duration: durationResult };
 }
