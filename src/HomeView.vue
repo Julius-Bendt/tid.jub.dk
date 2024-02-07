@@ -132,7 +132,7 @@ function setOrAddRegistration(input: IRegistration) {
     }
 
     // If the old registration has a description, and the new registration also has a description, add an error
-    if (oldRegistration.description?.length > 0 && input.description?.length > 0) {
+    if (!!oldRegistration.description && !!input.description) {
       errors.value.push(
         `Opgaven med id'et '${input.letter}' har allerede en beskrivelse`
       )
