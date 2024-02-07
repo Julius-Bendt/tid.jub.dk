@@ -43,7 +43,6 @@ import { ref, computed, nextTick } from 'vue'
 import type { IRegistration, ITimeRange } from '@/interfaces'
 import {
   extractWithDescription,
-  extractFromId,
   checkForOverlap,
   calculateTotalTime,
   loadFromStorage,
@@ -95,9 +94,7 @@ function formatRegistrations(input: Array<string>) {
     }
 
     // Determine whether the input string contains a description and parse accordingly
-    const extractResult = inputString.includes(' - ')
-      ? extractWithDescription(inputString)
-      : extractFromId(inputString)
+    const extractResult = extractWithDescription(inputString)
 
     // If the result is a string, it is an error message, add it to errors and return
     if (typeof extractResult === 'string') {
@@ -134,10 +131,15 @@ function setOrAddRegistration(input: IRegistration) {
       return
     }
 
-    // If the old registration has a description, use it
-    if (oldRegistration.description !== '') {
-      description = oldRegistration.description
+    // If the old registration has a description, and the new registration also has a description, add an error
+    if (oldRegistration.description?.length > 0 && input.description?.length > 0) {
+      errors.value.push(
+        `Opgaven med id'et '${input.letter}' har allerede en beskrivelse`
+      )
+      return
     }
+
+    description = oldRegistration.description || input.description
 
     // Add old registration's time ranges to the new registration
     timeRanges.push(...oldRegistration.timeRanges)
