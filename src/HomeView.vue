@@ -32,11 +32,7 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
           <RegistrationTable v-if="errors.length == 0" :registrations="registrationsArray" />
         </div>
 
-        <ul v-else>
-          <li v-for="(error, i) in errors" :key="i">
-            {{ error }}
-          </li>
-        </ul>
+        <ErrorTable v-else :errors="errors" />
       </div>
     </main>
   </div>
@@ -55,6 +51,7 @@ import {
 } from '@/helpers'
 
 import RegistrationTable from '@/components/RegistrationTable.vue'
+import ErrorTable from '@/components/ErrorTable.vue'
 
 const registrationsText = ref(loadFromStorage()) // The panel to the left
 // If any string was found in the cache, format it

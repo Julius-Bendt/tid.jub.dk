@@ -18,7 +18,7 @@
         <th scope="row" class="px-6 py-4 font-bold">{{ registration.letter }}</th>
         <td class="px-6 py-4">{{ getTimePeriods(registration) }}</td>
         <td class="px-6 py-4">{{ calculateTotalTimeForRegistration(registration) / 60 }}</td>
-        <td class="px-6 py-4 whitespace-nowrap">
+        <td class="px-6 py-4">
           {{ registration.description }}
         </td>
       </tr>
