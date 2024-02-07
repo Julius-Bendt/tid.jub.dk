@@ -16,9 +16,7 @@
         class="odd:bg-gray-900 even:bg-gray-800 border-b border-gray-700 hover:bg-primary text-text cursor-pointer transition-colors"
         :class="{ 'line-through': registration.clicked }"
       >
-        <th scope="row" class="px-6 py-4 font-bold">
-          {{ registration.letter }} - clicked: {{ registration.clicked }}
-        </th>
+        <th scope="row" class="px-6 py-4 font-bold">{{ registration.letter }}</th>
         <td class="px-6 py-4">{{ getTimePeriods(registration) }}</td>
         <td class="px-6 py-4">{{ calculateTotalTimeForRegistration(registration) / 60 }}</td>
         <td class="px-6 py-4">
