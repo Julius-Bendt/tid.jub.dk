@@ -2,9 +2,6 @@
   <div class="p-4 h-screen w-screen bg-background text-text">
     <div class="flex justify-between">
       <h1 class="text-xl font-bold">Hjælper til tidsregistrering</h1>
-      <a href="https://github.com/Julius-Bendt/tid.jub.dk" class="text-primary" target="_blank">
-        Github repository
-      </a>
     </div>
     <main class="grid grid-cols-2 mt-2 gap-4">
       <div>
@@ -35,6 +32,19 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
         <ErrorTable v-else :errors="errors" />
       </div>
     </main>
+    <footer class="mt-10">
+      <p class="text-xs text-center">
+        Crafted with passion ❤️ and a relentless pursuit of perfection by the dynamic duo
+        <br />
+        <a href="https://jub.dk" class="text-primary" target="_blank">Julius Bendt</a>
+        and
+        <a href="https://github.com/neophear" class="text-primary" target="_blank">Stiig Gade</a>
+        <br />
+        <a href="https://github.com/Julius-Bendt/tid.jub.dk" class="text-primary" target="_blank">
+          Github repository
+        </a>
+      </p>
+    </footer>
   </div>
 </template>
 
