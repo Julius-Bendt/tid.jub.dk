@@ -39,7 +39,7 @@ const props = defineProps({
 })
 
 function getTimePeriods(registration: IRegistration): string {
-  const ranges = []
+  const ranges: string[] = []
 
   registration.timeRanges.forEach((range) => {
     // Appends a "0", if the time is before 1000. 900 --> 0900

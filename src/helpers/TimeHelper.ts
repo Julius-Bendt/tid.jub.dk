@@ -1,16 +1,16 @@
 import type { IRegistration, ITimeRange } from "@/interfaces";
 
-// Function to parse a time range string and return an object or error message
-export function parseTimeRange(input: string): ITimeRange | string {
-    const [time] = input.split(':');
-    const [start, end] = time.split('-').map(t => parseInt(t));
+// Function to parse time range strings and return an object or error message
+export function parseTimeRange(fromString: string, toString: string): ITimeRange | string {
+    const start = parseInt(fromString);
+    const end = parseInt(toString);
 
     // Adjusting hours for 24-hour format
     const startTime = start < 1000 ? (start < 10 ? start * 100 : start) : start;
     const endTime = end < 1000 ? (end < 10 ? end * 100 : end) : end;
 
     // Calculating the duration using another function
-    const durationResult = calculateTimeDifference(time);
+    const durationResult = calculateTimeDifference(fromString, toString);
 
     // If the duration calculation results in an error, return it
     if (typeof durationResult === "string") {
@@ -22,11 +22,7 @@ export function parseTimeRange(input: string): ITimeRange | string {
 }
 
 // Function to calculate the time difference between two time strings
-export function calculateTimeDifference(input: string): number | string {
-    const timeRange = input.split('-')
-    const startTime: string = timeRange[0].trim();
-    const endTime: string = timeRange[1].trim();
-
+export function calculateTimeDifference(startTime: string, endTime: string): number | string {
     // Parse the time strings
     const startHours = parseInt(startTime.slice(0, 2))
     const startMinutes = parseInt(startTime.slice(2))
