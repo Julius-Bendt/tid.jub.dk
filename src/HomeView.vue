@@ -5,7 +5,7 @@
         <textarea
           rows="24"
           v-model="registrationsText"
-          @input="formatRegistrationsCallback"
+          @input="registrationsDebounced"
           class="block p-2.5 w-full text-sm rounded-lg border border-primary bg-backgroundSecondary focus:ring-primary focus:border-primary transition-all"
           placeholder="Skriv tidsregisteringer her...
 Indsæt opgaver i følgende format: (fra)hhmm-(til)hhmm: {ID} - {beskrivelse af opgave}.
@@ -42,7 +42,8 @@ import {
   checkForOverlap,
   calculateTotalTime,
   loadFromStorage,
-  saveToStorage
+  saveToStorage,
+  debounce
 } from '@/helpers'
 
 import RegistrationTable from '@/components/RegistrationTable.vue'
@@ -61,6 +62,8 @@ const formattedRegistrations = ref<Map<string, IRegistration>>(new Map())
 const errors = ref<string[]>([])
 
 const registrationsArray = computed(() => Array.from(formattedRegistrations.value.values()))
+
+const registrationsDebounced = debounce(formatRegistrationsCallback, 200)
 
 // Function to clear previous formatted registrations, process input, and handle errors
 function formatRegistrationsCallback() {
