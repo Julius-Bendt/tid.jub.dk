@@ -1,16 +1,16 @@
 import type { IRegistration, ITimeRange } from "@/interfaces";
 
 // Function to parse time range strings and return an object or error message
-export function parseTimeRange(fromString: string, toString: string): ITimeRange | string {
+export function parseTimeRange(fromString: string, endString: string): ITimeRange | string {
     const start = parseInt(fromString);
-    const end = parseInt(toString);
+    const end = parseInt(endString);
 
     // Adjusting hours for 24-hour format
     const startTime = start < 1000 ? (start < 10 ? start * 100 : start) : start;
     const endTime = end < 1000 ? (end < 10 ? end * 100 : end) : end;
 
     // Calculating the duration using another function
-    const durationResult = calculateTimeDifference(fromString, toString);
+    const durationResult = calculateTimeDifference(fromString, endString);
 
     // If the duration calculation results in an error, return it
     if (typeof durationResult === "string") {
