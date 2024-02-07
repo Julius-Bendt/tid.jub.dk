@@ -13,8 +13,11 @@
         v-for="registration in props.registrations"
         :key="registration.letter"
         @click="clickRegistration(registration)"
-        class="odd:bg-gray-900 even:bg-gray-800 border-b border-gray-700 hover:bg-primary text-text cursor-pointer transition-colors"
-        :class="{ 'line-through': registration.clicked }"
+        class="border-b border-gray-700 hover:bg-primary text-text cursor-pointer transition-colors"
+        :class="{
+          'line-through bg-gray-700': registration.clicked,
+          'odd:bg-gray-900 even:bg-gray-800': !registration.clicked
+        }"
       >
         <th scope="row" class="px-6 py-4 font-bold">{{ registration.letter }}</th>
         <td class="px-6 py-4">{{ getTimePeriods(registration) }}</td>

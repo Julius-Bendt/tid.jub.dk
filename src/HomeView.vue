@@ -156,6 +156,7 @@ function registrationClicked(input: IRegistration) {
     input.letter
   ) as IRegistration
 
-  registration.clicked = !registration.clicked // I did not except this to work without modifying the map it self. apparently it does indeed update.
+  // I did not expect this to work without modifying the map itself. apparently it does indeed update.
+  registration.clicked = !registration.clicked
 }
 </script>
