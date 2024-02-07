@@ -1,12 +1,7 @@
 <template>
-  <div class="p-4 h-screen w-screen bg-background text-text">
-    <div class="flex justify-between">
-      <h1 class="text-xl font-bold">Hjælper til tidsregistrering</h1>
-    </div>
+  <div class="p-4 min-h-screen w-screen bg-background text-text">
     <main class="grid grid-cols-2 mt-2 gap-4">
       <div>
-        <h2 class="text-lg font-bold mb-2">Register</h2>
-
         <textarea
           rows="24"
           v-model="registrationsText"
@@ -23,28 +18,19 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
         ></textarea>
       </div>
       <div>
-        <h2 class="text-lg font-bold mb-2">Formatteret</h2>
         <div v-if="errors.length == 0">
           <p class="font-bold pt-3">Total: {{ calculateTotalTime(registrationsArray) }}</p>
-          <RegistrationTable v-if="errors.length == 0" :registrations="registrationsArray" />
+          <RegistrationTable
+            v-if="errors.length == 0"
+            :registrations="registrationsArray"
+            @registrationClicked="registrationClicked"
+          />
         </div>
 
         <ErrorTable v-else :errors="errors" />
       </div>
     </main>
-    <footer class="mt-10">
-      <p class="text-xs text-center">
-        Crafted with passion ❤️ and a relentless pursuit of perfection by the dynamic duo
-        <br />
-        <a href="https://jub.dk" class="text-primary" target="_blank">Julius Bendt</a>
-        and
-        <a href="https://github.com/neophear" class="text-primary" target="_blank">Stiig Gade</a>
-        <br />
-        <a href="https://github.com/Julius-Bendt/tid.jub.dk" class="text-primary" target="_blank">
-          Github repository
-        </a>
-      </p>
-    </footer>
+    <FooterNav />
   </div>
 </template>
 
@@ -61,6 +47,7 @@ import {
 
 import RegistrationTable from '@/components/RegistrationTable.vue'
 import ErrorTable from '@/components/ErrorTable.vue'
+import FooterNav from '@/components/FooterNav.vue'
 
 const registrationsText = ref(loadFromStorage()) // The panel to the left
 // If any string was found in the cache, format it
@@ -128,7 +115,8 @@ function formatRegistrations(input: Array<string>) {
 // Function to set or add a registration to the formatted registrations
 function setOrAddRegistration(input: IRegistration) {
   const timeRanges: ITimeRange[] = [...input.timeRanges]
-  let description = input.description
+  let description = input.description ?? ''
+  let clicked: boolean = input.clicked ?? false
 
   if (formattedRegistrations.value.has(input.letter)) {
     const oldRegistration: IRegistration = formattedRegistrations.value.get(
@@ -143,13 +131,12 @@ function setOrAddRegistration(input: IRegistration) {
 
     // If the old registration has a description, and the new registration also has a description, add an error
     if (!!oldRegistration.description && !!input.description) {
-      errors.value.push(
-        `Opgaven med id'et '${input.letter}' har allerede en beskrivelse`
-      )
+      errors.value.push(`Opgaven med id'et '${input.letter}' har allerede en beskrivelse`)
       return
     }
 
     description = oldRegistration.description || input.description
+    clicked = oldRegistration.clicked || input.clicked
 
     // Add old registration's time ranges to the new registration
     timeRanges.push(...oldRegistration.timeRanges)
@@ -159,7 +146,16 @@ function setOrAddRegistration(input: IRegistration) {
   formattedRegistrations.value.set(input.letter, {
     letter: input.letter,
     timeRanges: timeRanges,
-    description: description
+    description: description,
+    clicked: clicked
   } as IRegistration)
+}
+
+function registrationClicked(input: IRegistration) {
+  const registration: IRegistration = formattedRegistrations.value.get(
+    input.letter
+  ) as IRegistration
+
+  registration.clicked = !registration.clicked // I did not except this to work without modifying the map it self. apparently it does indeed update.
 }
 </script>

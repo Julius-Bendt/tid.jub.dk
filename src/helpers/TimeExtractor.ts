@@ -34,6 +34,7 @@ export function extractWithDescription(input: string): string | IRegistration {
     return {
         letter: letter,
         timeRanges: [timeRange],
-        description: message
+        description: message,
+        clicked: false,
     };
 }
