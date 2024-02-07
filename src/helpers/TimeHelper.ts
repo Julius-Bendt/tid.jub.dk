@@ -92,3 +92,19 @@ export function checkForOverlap(registrations: IRegistration[]): string[] {
     // Return any errors found during the overlap check
     return errors;
 }
+
+// Function to calculate the total duration of a registration
+export function calculateTotalTimeForRegistration(registration: IRegistration): number {
+    return registration.timeRanges.reduce((result, current) => {
+        return result + current.duration
+    }, 0)
+}
+
+export function calculateTotalTime(registrations: IRegistration[]) {
+    return (
+        registrations.reduce(
+            (result, current) => result + calculateTotalTimeForRegistration(current),
+            0
+        ) / 60
+    )
+}

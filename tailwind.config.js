@@ -6,7 +6,7 @@ export default {
       colors: {
         primary: '#6366F1',
         background: '#1F2022',
-        backgroundSecondary: '#23304B',
+        backgroundSecondary: '#111827',
         text: '#F3F4F6'
       },
       fontFamily: {
