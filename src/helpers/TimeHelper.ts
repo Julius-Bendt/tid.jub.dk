@@ -24,8 +24,8 @@ export function parseTimeRange(input: string): ITimeRange | string {
 // Function to calculate the time difference between two time strings
 export function calculateTimeDifference(input: string): number | string {
     const timeRange = input.split('-')
-    const startTime: string = timeRange[0]
-    const endTime: string = timeRange[1]
+    const startTime: string = timeRange[0].trim();
+    const endTime: string = timeRange[1].trim();
 
     // Parse the time strings
     const startHours = parseInt(startTime.slice(0, 2))

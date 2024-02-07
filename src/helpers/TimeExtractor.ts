@@ -5,7 +5,7 @@ import { parseTimeRange } from "./TimeHelper";
 // Group 1: Time range
 // Group 2: Letter
 // Group 3: Description, optional
-const MATCH_LINE = /(\d{4}-\d{4}):\s?([a-zA-Z])(?:[-\s]+(.+))?/;
+const MATCH_LINE = /(\d{4}\s?-\s?\d{4}):\s?([a-zA-Z])(?:[-\s]+(.+))?/;
 
 // Function to extract information from input string with an ID, time range, and description
 export function extractWithDescription(input: string): string | IRegistration {
