@@ -17,8 +17,8 @@ export function parseTimeRange(fromString: string, endString: string): ITimeRang
         return durationResult;
     }
 
-    if (15 % durationResult == 0) {
-        return `${time} is not rounded to the nearest quarter`;
+    if (durationResult % 15 != 0) {
+        return `${fromString}-${endString} is not rounded to the nearest quarter`;
     }
 
     // Return an object with parsed time range information
