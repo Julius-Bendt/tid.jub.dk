@@ -2,10 +2,11 @@ import type { IRegistration } from "@/interfaces"
 import { parseTimeRange } from "./TimeHelper";
 
 // Regular expression patterns for matching specific formats in the input string
-// Group 1: Time range
-// Group 2: Letter
-// Group 3: Description, optional
-const MATCH_LINE = /(\d{4}-\d{4}):\s?([a-zA-Z])(?:[-\s]+(.+))?/;
+// Group 1: Start time
+// Group 2: End time
+// Group 3: Letter
+// Group 4: Description, optional
+const MATCH_LINE = /(\d{4})\s?-\s?(\d{4}):\s?([a-zA-Z])(?:[-\s]+(.+))?/;
 
 // Function to extract information from input string with an ID, time range, and description
 export function extractWithDescription(input: string): string | IRegistration {
@@ -14,16 +15,16 @@ export function extractWithDescription(input: string): string | IRegistration {
     const match = input.match(MATCH_LINE);
 
     // If no match or an invalid match is found, return an error message
-    if (!match || match.length != 4) {
+    if (!match || match.length != 5) {
         return `No or invalid match found for input: ${input}`;
     }
 
     // Extracting components from the match
-    const letter = match[2].toUpperCase();
-    const message = match[3];
+    const letter = match[3].toUpperCase();
+    const message = match[4];
 
-    // Parsing the time range from the match
-    const timeRange = parseTimeRange(match[1]);
+    // Parsing the time range from the matches
+    const timeRange = parseTimeRange(match[1], match[2]);
 
     // If the time range is a string (error message), return it
     if (typeof timeRange === "string") {
@@ -34,6 +35,7 @@ export function extractWithDescription(input: string): string | IRegistration {
     return {
         letter: letter,
         timeRanges: [timeRange],
-        description: message
+        description: message,
+        clicked: false,
     };
 }

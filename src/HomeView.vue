@@ -5,7 +5,7 @@
         <textarea
           rows="24"
           v-model="registrationsText"
-          @input="formatRegistrationsCallback"
+          @input="registrationsDebounced"
           class="block p-2.5 w-full text-sm rounded-lg border border-primary bg-backgroundSecondary focus:ring-primary focus:border-primary transition-all"
           placeholder="Skriv tidsregisteringer her...
 Indsæt opgaver i følgende format: (fra)hhmm-(til)hhmm: {ID} - {beskrivelse af opgave}.
@@ -20,7 +20,11 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
       <div>
         <div v-if="errors.length == 0">
           <p class="font-bold pt-3">Total: {{ calculateTotalTime(registrationsArray) }}</p>
-          <RegistrationTable v-if="errors.length == 0" :registrations="registrationsArray" />
+          <RegistrationTable
+            v-if="errors.length == 0"
+            :registrations="registrationsArray"
+            @registrationClicked="registrationClicked"
+          />
         </div>
 
         <ErrorTable v-else :errors="errors" />
@@ -38,7 +42,8 @@ import {
   checkForOverlap,
   calculateTotalTime,
   loadFromStorage,
-  saveToStorage
+  saveToStorage,
+  debounce
 } from '@/helpers'
 
 import RegistrationTable from '@/components/RegistrationTable.vue'
@@ -57,6 +62,8 @@ const formattedRegistrations = ref<Map<string, IRegistration>>(new Map())
 const errors = ref<string[]>([])
 
 const registrationsArray = computed(() => Array.from(formattedRegistrations.value.values()))
+
+const registrationsDebounced = debounce(formatRegistrationsCallback, 200)
 
 // Function to clear previous formatted registrations, process input, and handle errors
 function formatRegistrationsCallback() {
@@ -111,7 +118,8 @@ function formatRegistrations(input: Array<string>) {
 // Function to set or add a registration to the formatted registrations
 function setOrAddRegistration(input: IRegistration) {
   const timeRanges: ITimeRange[] = [...input.timeRanges]
-  let description = input.description
+  let description = input.description ?? ''
+  let clicked: boolean = input.clicked ?? false
 
   if (formattedRegistrations.value.has(input.letter)) {
     const oldRegistration: IRegistration = formattedRegistrations.value.get(
@@ -131,6 +139,7 @@ function setOrAddRegistration(input: IRegistration) {
     }
 
     description = oldRegistration.description || input.description
+    clicked = oldRegistration.clicked || input.clicked
 
     // Add old registration's time ranges to the new registration
     timeRanges.push(...oldRegistration.timeRanges)
@@ -140,7 +149,17 @@ function setOrAddRegistration(input: IRegistration) {
   formattedRegistrations.value.set(input.letter, {
     letter: input.letter,
     timeRanges: timeRanges,
-    description: description
+    description: description,
+    clicked: clicked
   } as IRegistration)
+}
+
+function registrationClicked(input: IRegistration) {
+  const registration: IRegistration = formattedRegistrations.value.get(
+    input.letter
+  ) as IRegistration
+
+  // I did not expect this to work without modifying the map itself. apparently it does indeed update.
+  registration.clicked = !registration.clicked
 }
 </script>
