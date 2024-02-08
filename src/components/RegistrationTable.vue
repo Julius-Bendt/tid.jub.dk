@@ -13,10 +13,9 @@
         v-for="registration in props.registrations"
         :key="registration.letter"
         @click="clickRegistration(registration)"
-        class="border-b last:border-b-0 border-gray-700 hover:bg-primary text-text transition-colors"
+        class="border-b last:border-b-0 border-gray-700 odd:bg-gray-900 even:bg-gray-800 hover:bg-primary text-text transition-colors"
         :class="{
-          'line-through bg-gray-700': registration.clicked,
-          'odd:bg-gray-900 even:bg-gray-800': !registration.clicked,
+          'opacity-50': registration.clicked,
           'cursor-pointer': props.clickable
         }"
       >
