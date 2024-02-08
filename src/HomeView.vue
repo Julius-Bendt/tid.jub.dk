@@ -15,6 +15,8 @@ Indsæt opgaver i følgende format: (fra)hhmm-(til)hhmm: {ID} - {beskrivelse af 
 1015-1045: A (OBS: Opgaven med id'et 'A' har allerede en beskrivelse, hvorfor en ny ikke er nødvendig)
 
 Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til clipboardet
+
+Data forlader aldrig browseren og sendes ikke til nogen server. Alle beregninger sker lokalt i din browser. We all 'bout that privacy! 🔒'
 "
         ></textarea>
       </div>
