@@ -1,5 +1,5 @@
 <template>
-  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+  <table class="w-full text-sm text-left text-gray-500 rounded-md overflow-hidden">
     <thead class="text-xs text-text uppercase bg-gray-800">
       <tr>
         <th scope="col" class="px-6 py-3">ID</th>
@@ -13,10 +13,11 @@
         v-for="registration in props.registrations"
         :key="registration.letter"
         @click="clickRegistration(registration)"
-        class="border-b border-gray-700 hover:bg-primary text-text cursor-pointer transition-colors"
+        class="border-b last:border-b-0 border-gray-700 hover:bg-primary text-text transition-colors"
         :class="{
           'line-through bg-gray-700': registration.clicked,
-          'odd:bg-gray-900 even:bg-gray-800': !registration.clicked
+          'odd:bg-gray-900 even:bg-gray-800': !registration.clicked,
+          'cursor-pointer': props.clickable
         }"
       >
         <th scope="row" class="px-6 py-4 font-bold">{{ registration.letter }}</th>
@@ -39,7 +40,7 @@ const emit = defineEmits(['registrationClicked'])
 
 const props = defineProps({
   registrations: { type: Array<IRegistration>, default: () => [] },
-  bar: Number
+  clickable: { type: Boolean, default: () => true }
 })
 
 function getTimePeriods(registration: IRegistration): string {
@@ -57,6 +58,10 @@ function getTimePeriods(registration: IRegistration): string {
 }
 
 function clickRegistration(registration: IRegistration) {
+  if (!props.clickable) {
+    return
+  }
+
   // Send event
   emit('registrationClicked', registration)
 

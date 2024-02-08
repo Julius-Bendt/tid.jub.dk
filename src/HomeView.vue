@@ -1,5 +1,6 @@
 <template>
   <div class="p-4 min-h-screen w-screen bg-background text-text">
+    <HistoricalRegistrationModal ref="modalRef" />
     <main class="grid grid-cols-2 mt-2 gap-4">
       <div>
         <textarea
@@ -18,16 +19,27 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
         ></textarea>
       </div>
       <div>
-        <div v-if="errors.length == 0">
-          <p class="font-bold pt-3">Total: {{ calculateTotalTime(registrationsArray) }}</p>
+        <div v-if="registrationStore.errors.length == 0">
+          <div class="flex justify-between px-2">
+            <p class="mb-2">
+              🕐Timer Totalt:
+              <span class="font-bold">
+                {{ calculateTotalTime(registrationStore.registrationsArray) }}
+              </span>
+            </p>
+            <a class="text-primary" href="#" @click="openModal" v-if="modalRef != null"
+              >🗓️ Se tidligere registeringer</a
+            >
+          </div>
+
           <RegistrationTable
-            v-if="errors.length == 0"
-            :registrations="registrationsArray"
+            v-if="registrationStore.errors.length == 0"
+            :registrations="registrationStore.registrationsArray"
             @registrationClicked="registrationClicked"
           />
         </div>
 
-        <ErrorTable v-else :errors="errors" />
+        <ErrorTable v-else :errors="registrationStore.errors" />
       </div>
     </main>
     <FooterNav />
@@ -35,131 +47,44 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick } from 'vue'
-import type { IRegistration, ITimeRange } from '@/interfaces'
-import {
-  extractWithDescription,
-  checkForOverlap,
-  calculateTotalTime,
-  loadFromStorage,
-  saveToStorage,
-  debounce
-} from '@/helpers'
+import { useRegistrationStore } from '@/stores/RegistrationStore'
+
+import { ref, nextTick } from 'vue'
+import type { IRegistration } from '@/interfaces'
+import { calculateTotalTime, loadFromStorage, debounce } from '@/helpers'
 
 import RegistrationTable from '@/components/RegistrationTable.vue'
 import ErrorTable from '@/components/ErrorTable.vue'
 import FooterNav from '@/components/FooterNav.vue'
+import HistoricalRegistrationModal from '@/components/historical/HistoricalRegistrationModal.vue'
 
+const registrationStore = useRegistrationStore()
+
+const modalRef = ref(null)
 const registrationsText = ref(loadFromStorage()) // The panel to the left
 // If any string was found in the cache, format it
 if (registrationsText.value != '') {
   nextTick(() => {
-    formatRegistrationsCallback()
+    registrationStore.formatRegistrationsCallback(registrationsText.value)
   })
 }
 
-const formattedRegistrations = ref<Map<string, IRegistration>>(new Map())
-const errors = ref<string[]>([])
+const registrationsDebounced = debounce(debounceHelper, 200)
 
-const registrationsArray = computed(() => Array.from(formattedRegistrations.value.values()))
-
-const registrationsDebounced = debounce(formatRegistrationsCallback, 200)
-
-// Function to clear previous formatted registrations, process input, and handle errors
-function formatRegistrationsCallback() {
-  // Clear previous formatted registrations and errors
-  formattedRegistrations.value.clear()
-  errors.value = []
-
-  // Split input text into an array of strings based on new lines
-  const registrations = registrationsText.value.split(/\r?\n/)
-
-  // Format registrations and handle errors
-  formatRegistrations(registrations)
-
-  // Remove duplicate errors
-  errors.value = errors.value.filter((error, index, self) => self.indexOf(error) === index)
-  saveToStorage(registrationsText.value)
-}
-
-// Function to format registrations from an array of input strings
-function formatRegistrations(input: Array<string>) {
-  for (let inputString of input) {
-    // Trim leading and trailing whitespaces
-    inputString = inputString.trim()
-
-    // Skip empty lines
-    if (inputString === '') {
-      continue
-    }
-
-    // Determine whether the input string contains a description and parse accordingly
-    const extractResult = extractWithDescription(inputString)
-
-    // If the result is a string, it is an error message, add it to errors and return
-    if (typeof extractResult === 'string') {
-      errors.value.push(extractResult)
-      return
-    }
-
-    // Set or add the registration to the formatted registrations
-    setOrAddRegistration(extractResult as IRegistration)
-
-    // Check for overlap errors among registrations
-    const overlapErrors = checkForOverlap(Array.from(formattedRegistrations.value.values()))
-
-    // If there are overlap errors, add them to the errors array
-    if (overlapErrors.length !== 0) {
-      errors.value.push(...overlapErrors)
-    }
-  }
-}
-
-// Function to set or add a registration to the formatted registrations
-function setOrAddRegistration(input: IRegistration) {
-  const timeRanges: ITimeRange[] = [...input.timeRanges]
-  let description = input.description ?? ''
-  let clicked: boolean = input.clicked ?? false
-
-  if (formattedRegistrations.value.has(input.letter)) {
-    const oldRegistration: IRegistration = formattedRegistrations.value.get(
-      input.letter
-    ) as IRegistration
-
-    // Not really needed, but static code analysis kept complaining
-    if (!oldRegistration) {
-      console.error('Something went wrong finding this registration:', input)
-      return
-    }
-
-    // If the old registration has a description, and the new registration also has a description, add an error
-    if (!!oldRegistration.description && !!input.description) {
-      errors.value.push(`Opgaven med id'et '${input.letter}' har allerede en beskrivelse`)
-      return
-    }
-
-    description = oldRegistration.description || input.description
-    clicked = oldRegistration.clicked || input.clicked
-
-    // Add old registration's time ranges to the new registration
-    timeRanges.push(...oldRegistration.timeRanges)
-  }
-
-  // Set the registration in the formatted registrations map
-  formattedRegistrations.value.set(input.letter, {
-    letter: input.letter,
-    timeRanges: timeRanges,
-    description: description,
-    clicked: clicked
-  } as IRegistration)
+function debounceHelper() {
+  registrationStore.formatRegistrationsCallback(registrationsText.value)
 }
 
 function registrationClicked(input: IRegistration) {
-  const registration: IRegistration = formattedRegistrations.value.get(
+  const registration: IRegistration = registrationStore.formattedRegistrations.get(
     input.letter
   ) as IRegistration
 
   // I did not expect this to work without modifying the map itself. apparently it does indeed update.
   registration.clicked = !registration.clicked
+}
+
+function openModal() {
+  modalRef?.value?.changeModalState(true)
 }
 </script>
