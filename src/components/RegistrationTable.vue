@@ -15,7 +15,7 @@
         @click="clickRegistration(registration)"
         class="border-b border-gray-700 hover:bg-primary text-text cursor-pointer transition-colors"
         :class="{
-          'line-through bg-gray-700': registration.clicked,
+          'text-gray-600 bg-gray-700': registration.clicked,
           'odd:bg-gray-900 even:bg-gray-800': !registration.clicked
         }"
       >
