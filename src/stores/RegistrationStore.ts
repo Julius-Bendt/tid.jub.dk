@@ -1,10 +1,11 @@
-import { ref, computed } from 'vue'
+import { ref, computed, toRaw } from 'vue'
 import type { IRegistration, ITimeRange } from '@/interfaces'
 import {
   extractWithDescription,
   checkForOverlap,
   saveToStorage,
   loadFromStorage,
+  toRawDeep
 } from '@/helpers'
 
 import { defineStore } from 'pinia'
@@ -20,7 +21,7 @@ export const useRegistrationStore = defineStore('registrationStore', () => {
     const tempDataString = loadFromStorage();
 
     formatRegistrationsCallback(registrationsText);
-    const registrations = JSON.parse(JSON.stringify(registrationsArray.value));
+    const registrations = structuredClone(toRawDeep(registrationsArray.value));
 
     formatRegistrationsCallback(tempDataString);
     return registrations;
