@@ -13,17 +13,32 @@
         v-for="registration in props.registrations"
         :key="registration.letter"
         @click="clickRegistration(registration)"
-        class="border-b last:border-b-0 border-gray-700 odd:bg-gray-900 even:bg-gray-800 hover:bg-primary text-text transition-colors"
+        class="text-text transition-colors"
         :class="{
           'opacity-50': registration.clicked,
-          'cursor-pointer': props.clickable
+          'cursor-pointer': props.clickable && !registration.showAsWarning,
+          'bg-yellow-600': registration.showAsWarning,
+          'odd:bg-gray-900 even:bg-gray-800 hover:bg-primary border-b last:border-b-0 border-gray-700':
+            !registration.showAsWarning
         }"
       >
-        <th scope="row" class="px-6 py-4 font-bold">{{ registration.letter }}</th>
-        <td class="px-6 py-4">{{ getTimePeriods(registration) }}</td>
-        <td class="px-6 py-4">{{ calculateTotalTimeForRegistration(registration) / 60 }}</td>
+        <th scope="row" class="px-6 py-4 font-bold">
+          {{ registration.showAsWarning ? '' : registration.letter }}
+        </th>
         <td class="px-6 py-4">
-          {{ registration.description }}
+          {{ getTimePeriods(registration) }}
+        </td>
+        <td class="px-6 py-4">
+          {{ calculateTotalTimeForRegistration(registration) / 60 }}
+        </td>
+        <td class="px-6 py-4">
+          <p>{{ registration.description }}</p>
+          <span v-for="(error, i) in registration.errors" :key="i" class="text-red-600"
+            >{{ error }}
+          </span>
+          <span v-for="(warning, i) in registration.warnings" :key="i" class="text-yellow-600"
+            >{{ warning }}
+          </span>
         </td>
       </tr>
     </tbody>
@@ -57,7 +72,7 @@ function getTimePeriods(registration: IRegistration): string {
 }
 
 function clickRegistration(registration: IRegistration) {
-  if (!props.clickable) {
+  if (!props.clickable || registration.showAsWarning) {
     return
   }
 

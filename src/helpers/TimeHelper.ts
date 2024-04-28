@@ -1,28 +1,35 @@
 import type { IRegistration, ITimeRange } from "@/interfaces";
+import type { IOverlap } from "@/interfaces/IOverlap";
 
 // Function to parse time range strings and return an object or error message
-export function parseTimeRange(fromString: string, endString: string): ITimeRange | string {
+export function parseTimeRange(fromString: string, endString: string): ITimeRange {
     const start = parseInt(fromString);
     const end = parseInt(endString);
+    let parseError = "";
 
     // Adjusting hours for 24-hour format
     const startTime = start < 1000 ? (start < 10 ? start * 100 : start) : start;
     const endTime = end < 1000 ? (end < 10 ? end * 100 : end) : end;
 
     // Calculating the duration using another function
-    const durationResult = calculateTimeDifference(fromString, endString);
+    let durationResult = calculateTimeDifference(fromString, endString);
 
     // If the duration calculation results in an error, return it
     if (typeof durationResult === "string") {
-        return durationResult;
+        parseError = durationResult;
+        durationResult = 0;
     }
 
     if (durationResult % 15 != 0) {
-        return `${fromString}-${endString} is not rounded to the nearest quarter`;
+        parseError = `${fromString}-${endString} time ranges should be rounded to nearest quarter`;
+
+        const remainder = durationResult % 15;
+        // Round the duration to the nearest quarter by adding the necessary minutes
+        durationResult += 15 - remainder;
     }
 
     // Return an object with parsed time range information
-    return { startTime: startTime, endTime: endTime, duration: durationResult };
+    return { startTime: startTime, endTime: endTime, duration: durationResult, parseError };
 }
 
 // Function to calculate the time difference between two time strings
@@ -50,8 +57,8 @@ export function calculateTimeDifference(startTime: string, endTime: string): num
 }
 
 // Function to check for overlaps in time ranges among registrations
-export function checkForOverlap(registrations: IRegistration[]): string[] {
-    const errors: string[] = [];
+export function checkForOverlap(registrations: IRegistration[]): IOverlap[] {
+    const overlaps: IOverlap[] = [];
 
     // Iterate through each registration
     for (let i = 0; i < registrations.length; i++) {
@@ -69,7 +76,12 @@ export function checkForOverlap(registrations: IRegistration[]): string[] {
                         (timeRangeA.startTime < timeRangeB.endTime && timeRangeA.endTime > timeRangeB.startTime) ||
                         (timeRangeB.startTime < timeRangeA.endTime && timeRangeB.endTime > timeRangeA.startTime)
                     ) {
-                        errors.push(`${registrationA.letter}: Overlap within the same registration between ${timeRangeA.startTime}-${timeRangeA.endTime} and ${timeRangeB.startTime}-${timeRangeB.endTime}`);
+                        overlaps.push({
+                            registrationA: registrationA.letter,
+                            registrationB: registrationA.letter,
+                            timeRangeA: timeRangeA,
+                            timeRangeB: timeRangeB
+                        });
                     }
                 }
             }
@@ -82,15 +94,20 @@ export function checkForOverlap(registrations: IRegistration[]): string[] {
                         (timeRangeA.startTime < timeRangeB.endTime && timeRangeA.endTime > timeRangeB.startTime) ||
                         (timeRangeB.startTime < timeRangeA.endTime && timeRangeB.endTime > timeRangeA.startTime)
                     ) {
-                        errors.push(`${registrationA.letter} (${timeRangeA.startTime}-${timeRangeA.endTime}) and ${registrationB.letter} (${timeRangeB.startTime}-${timeRangeB.endTime}) overlap`);
+                        overlaps.push({
+                            registrationA: registrationA.letter,
+                            registrationB: registrationB.letter,
+                            timeRangeA: timeRangeA,
+                            timeRangeB: timeRangeB
+                        });
                     }
                 }
             }
         }
     }
 
-    // Return any errors found during the overlap check
-    return errors;
+    // Return any overlaps found during the overlap check
+    return overlaps;
 }
 
 // Function to calculate the total duration of a registration
@@ -102,9 +119,43 @@ export function calculateTotalTimeForRegistration(registration: IRegistration): 
 
 export function calculateTotalTime(registrations: IRegistration[]) {
     return (
-        registrations.reduce(
-            (result, current) => result + calculateTotalTimeForRegistration(current),
-            0
-        ) / 60
+        registrations
+            .filter((registration) => !registration.showAsWarning)
+            .reduce(
+                (result, current) => result + calculateTotalTimeForRegistration(current),
+                0
+            ) / 60
     )
+}
+
+export function findGaps(registrations: IRegistration[]): ITimeRange[] {
+    // Extract all time ranges into a single array
+    const allTimeRanges: ITimeRange[] = [];
+    const registrationIndexes: number[] = [];
+    registrations.forEach((registration, registrationIndex) => {
+        registration.timeRanges.forEach(timeRange => {
+            allTimeRanges.push(timeRange);
+            registrationIndexes.push(registrationIndex);
+        });
+    });
+
+    // Sort all time ranges by start time
+    const sortedTimeRanges = [...allTimeRanges];
+    sortedTimeRanges.sort((a, b) => a.startTime - b.startTime);
+
+    // Find gaps between all time ranges and their insertion indexes
+    const gaps: ITimeRange[] = [];
+    for (let i = 0; i < sortedTimeRanges.length - 1; i++) {
+        const endTimeCurrent = sortedTimeRanges[i].endTime;
+        const startTimeNext = sortedTimeRanges[i + 1].startTime;
+
+        if (endTimeCurrent < startTimeNext) {
+            const gapStartTime = endTimeCurrent;
+            const gapEndTime = startTimeNext;
+            const gapDuration = calculateTimeDifference(`${gapStartTime}`, `${gapEndTime}`) as number;
+            gaps.push({ startTime: gapStartTime, endTime: gapEndTime, duration: gapDuration, parseError: "" });
+        }
+    }
+
+    return gaps;
 }
