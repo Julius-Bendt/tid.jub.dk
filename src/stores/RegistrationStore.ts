@@ -6,10 +6,12 @@ import {
   saveToStorage,
   loadFromStorage,
   toRawDeep,
-  findGaps
+  findGaps,
+  formatTime
 } from '@/helpers'
 
 import { defineStore } from 'pinia'
+import { useToast } from 'vue-toast-notification'
 
 export const useRegistrationStore = defineStore('registrationStore', () => {
 
@@ -69,8 +71,9 @@ export const useRegistrationStore = defineStore('registrationStore', () => {
 
       // If the result is a string, it is an error message, add it to errors and return
       if (typeof extractResult === 'string') {
-        // errors.value.push(extractResult)
-        console.error("failed to extract time registrations: ", extractResult);
+        const $toast = useToast()
+        $toast.clear()
+        $toast.error(`failed to extract time registrations: ${extractResult}`)
         return
       }
 
@@ -85,18 +88,36 @@ export const useRegistrationStore = defineStore('registrationStore', () => {
 
     overlaps.forEach((overlap) => {
       const registrationA = registrationsArray.filter((registration => registration.letter === overlap.registrationA))[0];
-
       const registrationB = registrationsArray.filter((registration => registration.letter === overlap.registrationB))[0];
 
-      const insideSameRegistration = overlap.registrationA === overlap.registrationB;
-      if (insideSameRegistration) {
-        registrationA.warnings.push(`Overlap between ${overlap.timeRangeA.startTime}-${overlap.timeRangeA.endTime} and ${overlap.timeRangeB.startTime}-${overlap.timeRangeB.endTime}`)
+      const startA = formatTime(overlap.timeRangeA.startTime);
+      const endA = formatTime(overlap.timeRangeA.endTime);
+      const startB = formatTime(overlap.timeRangeB.startTime);
+      const endB = formatTime(overlap.timeRangeB.endTime);
+
+
+      // if registration A and B are the same
+      if (overlap.registrationA === overlap.registrationB) {
+        const warning = `Overlap between ${startA}-${endA} and ${startB}-${endB}`;
+
+        // Only show the overlap with lowest start time.
+        // Otherwise, two warnings will be produced
+        if (overlap.timeRangeA.startTime > overlap.timeRangeB.startTime) {
+          return;
+        }
+
+        // Don't add same warning twice 
+        if (registrationA.warnings.includes(warning) || registrationB.warnings.includes(warning)) {
+          return;
+        }
+
+        registrationA.warnings.push(warning)
         setRegistration(registrationA);
         return;
       }
 
-      registrationA.warnings.push(`Overlaps with '${overlap.registrationB}' between ${overlap.timeRangeA.startTime}-${overlap.timeRangeA.endTime} and ${overlap.timeRangeB.startTime}-${overlap.timeRangeB.endTime}`)
-      registrationB.warnings.push(`Overlaps with '${overlap.registrationA}' between ${overlap.timeRangeA.startTime}-${overlap.timeRangeA.endTime} and ${overlap.timeRangeB.startTime}-${overlap.timeRangeB.endTime}`)
+      registrationA.warnings.push(`Overlaps with '${overlap.registrationB}' between ${startA}-${endA} and ${startB}-${endB}`)
+      registrationB.warnings.push(`Overlaps with '${overlap.registrationA}' between ${startA}-${endA} and ${startB}-${endB}`)
 
       setRegistration(registrationA);
       setRegistration(registrationB);

@@ -32,6 +32,10 @@ export function parseTimeRange(fromString: string, endString: string): ITimeRang
     return { startTime: startTime, endTime: endTime, duration: durationResult, parseError };
 }
 
+export function formatTime(time: number): string {
+    return `${time < 1000 ? `0${time}` : time}`;
+}
+
 // Function to calculate the time difference between two time strings
 export function calculateTimeDifference(startTime: string, endTime: string): number | string {
     // Parse the time strings

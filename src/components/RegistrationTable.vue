@@ -31,7 +31,7 @@
         <td class="px-6 py-4">
           {{ calculateTotalTimeForRegistration(registration) / 60 }}
         </td>
-        <td class="px-6 py-4">
+        <td class="px-6 py-4 flex flex-col">
           <p>{{ registration.description }}</p>
           <span v-for="(error, i) in registration.errors" :key="i" class="text-red-600"
             >{{ error }}
@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import type { IRegistration } from '@/interfaces'
-import { calculateTotalTimeForRegistration } from '@/helpers'
+import { calculateTotalTimeForRegistration, formatTime } from '@/helpers'
 import { useToast } from 'vue-toast-notification'
 
 const emit = defineEmits(['registrationClicked'])
@@ -62,8 +62,8 @@ function getTimePeriods(registration: IRegistration): string {
 
   registration.timeRanges.forEach((range) => {
     // Appends a "0", if the time is before 1000. 900 --> 0900
-    const start = range.startTime < 1000 ? `0${range.startTime}` : range.startTime
-    const end = range.endTime < 1000 ? `0${range.endTime}` : range.endTime
+    const start = formatTime(range.startTime)
+    const end = formatTime(range.endTime)
 
     ranges.push(`${start}-${end}`)
   })
