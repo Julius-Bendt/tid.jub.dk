@@ -14,6 +14,7 @@ export function extractWithDescription(input: string): string | IRegistration {
     // Using the regular expression to match the expected pattern in the input
     const match = input.match(MATCH_LINE);
 
+
     // If no match or an invalid match is found, return an error message
     if (!match || match.length != 5) {
         return `No or invalid match found for input: ${input}`;
@@ -26,16 +27,14 @@ export function extractWithDescription(input: string): string | IRegistration {
     // Parsing the time range from the matches
     const timeRange = parseTimeRange(match[1], match[2]);
 
-    // If the time range is a string (error message), return it
-    if (typeof timeRange === "string") {
-        return timeRange;
-    }
-
     // Return an object with extracted information
     return {
         letter: letter,
         timeRanges: [timeRange],
         description: message,
         clicked: false,
+        warnings: [],
+        errors: [timeRange.parseError],
+        showAsWarning: false,
     };
 }

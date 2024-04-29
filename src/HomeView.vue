@@ -21,27 +21,22 @@ Data forlader aldrig browseren og sendes ikke til nogen server. Alle beregninger
         ></textarea>
       </div>
       <div>
-        <div v-if="registrationStore.errors.length == 0">
-          <div class="flex justify-between px-2">
-            <p class="mb-2">
-              🕐Timer Totalt:
-              <span class="font-bold">
-                {{ calculateTotalTime(registrationStore.registrationsArray) }}
-              </span>
-            </p>
-            <a class="text-primary" href="#" @click="openModal" v-if="modalRef != null"
-              >🗓️ Se tidligere registeringer</a
-            >
-          </div>
-
-          <RegistrationTable
-            v-if="registrationStore.errors.length == 0"
-            :registrations="registrationStore.registrationsArray"
-            @registrationClicked="registrationClicked"
-          />
+        <div class="flex justify-between px-2">
+          <p class="mb-2">
+            🕐Timer Totalt:
+            <span class="font-bold">
+              {{ calculateTotalTime(registrationStore.registrationsArray) }}
+            </span>
+          </p>
+          <a class="text-primary" href="#" @click="openModal" v-if="modalRef != null"
+            >🗓️ Se tidligere registeringer</a
+          >
         </div>
 
-        <ErrorTable v-else :errors="registrationStore.errors" />
+        <RegistrationTable
+          :registrations="registrationStore.registrationsArray"
+          @registrationClicked="registrationClicked"
+        />
       </div>
     </main>
     <FooterNav />
@@ -56,7 +51,6 @@ import type { IRegistration } from '@/interfaces'
 import { calculateTotalTime, loadFromStorage, debounce } from '@/helpers'
 
 import RegistrationTable from '@/components/RegistrationTable.vue'
-import ErrorTable from '@/components/ErrorTable.vue'
 import FooterNav from '@/components/FooterNav.vue'
 import HistoricalRegistrationModal from '@/components/historical/HistoricalRegistrationModal.vue'
 

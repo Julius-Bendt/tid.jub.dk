@@ -5,4 +5,7 @@ export interface IRegistration {
     description: string;
     timeRanges: ITimeRange[];
     clicked: boolean;
+    warnings: string[];
+    errors: string[];
+    showAsWarning: boolean;
 }
