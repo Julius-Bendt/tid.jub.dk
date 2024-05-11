@@ -130,11 +130,14 @@ export const useRegistrationStore = defineStore('registrationStore', () => {
     let gapKey: string = "";
     gaps.forEach((gap: ITimeRange) => {
 
+      const startTime = formatTime(gap.startTime);
+      const endTime = formatTime(gap.endTime);
+
       gapKey += "_";
       setRegistration({
         letter: gapKey,
         clicked: false,
-        description: `Gap between ${gap.startTime} - ${gap.endTime}`,
+        description: `Gap between ${startTime} - ${endTime}`,
         errors: [],
         showAsWarning: true,
         timeRanges: [gap],
