@@ -20,8 +20,15 @@ export const useRegistrationStore = defineStore('registrationStore', () => {
   const registrationsArray = computed(() => {
     const array = Array.from(formattedRegistrations.value.values());
     // Sort registrationsArray based on the start time of the first time range in each registration
-    array.sort((a, b) => a.timeRanges[0].startTime - b.timeRanges[0].startTime);
+    array.sort((a, b) => {
+
+      a.timeRanges.sort((aa, bb) => aa.startTime - bb.startTime); // Sort time ranges
+
+      return a.timeRanges[0].startTime - b.timeRanges[0].startTime // Show earliest first
+    });
+
     return array;
+
   });
 
   function formatWithoutSaving(registrationsText: string | undefined) {
