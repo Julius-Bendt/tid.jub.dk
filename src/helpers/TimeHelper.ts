@@ -32,12 +32,19 @@ export function parseTimeRange(fromString: string, endString: string): ITimeRang
     return { startTime: startTime, endTime: endTime, duration: durationResult, parseError };
 }
 
-export function formatTime(time: number): string {
+export function formatTime(_time: number | string): string {
+
+    const time: number = parseInt(`${_time}`); // Ensure "time" is a number
     return `${time < 1000 ? `0${time}` : time}`;
 }
 
 // Function to calculate the time difference between two time strings
-export function calculateTimeDifference(startTime: string, endTime: string): number | string {
+export function calculateTimeDifference(startTimeString: string, endTimeString: string): number | string {
+
+    // Ensures the correct format for the string
+    const startTime = formatTime(startTimeString);
+    const endTime = formatTime(endTimeString);
+
     // Parse the time strings
     const startHours = parseInt(startTime.slice(0, 2))
     const startMinutes = parseInt(startTime.slice(2))
@@ -157,6 +164,7 @@ export function findGaps(registrations: IRegistration[]): ITimeRange[] {
             const gapStartTime = endTimeCurrent;
             const gapEndTime = startTimeNext;
             const gapDuration = calculateTimeDifference(`${gapStartTime}`, `${gapEndTime}`) as number;
+
             gaps.push({ startTime: gapStartTime, endTime: gapEndTime, duration: gapDuration, parseError: "" });
         }
     }
