@@ -93,7 +93,7 @@ function loadData(date: string) {
     return
   }
 
-  registrationData.value = formatRegistrations(data.split('\n'))
+  registrationData.value = formatRegistrations(data.split(/\r?\n/))
   selectedDate.value = date
 }
 

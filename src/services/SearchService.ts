@@ -15,7 +15,7 @@ export function searchLocalStorage(searchTerm: string): ISearchItem[] {
         const lettersToInclude: string[] = [];
         const dataFromDate: string = loadFromStorage(date)
 
-        const filteredLines = dataFromDate.split("\n")
+        const filteredLines = dataFromDate.split(/\r?\n/)
             .filter((datum) => {
                 const letterMatch = datum.match(/: ([a-zA-Z])/); // Find the letter from a-z or A-Z
                 const letter = letterMatch ? letterMatch[1] : null;

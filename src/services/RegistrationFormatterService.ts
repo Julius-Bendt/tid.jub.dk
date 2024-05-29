@@ -3,7 +3,7 @@ import type { IRegistration, ITimeRange } from '@/interfaces'
 
 import { useToast } from "vue-toast-notification"
 
-export function formatRegistrations(input: Array<string>, insertOverlaps: boolean = true, insertGaps: boolean = true): IRegistration[] {
+export function formatRegistrations(input: Array<string>, insertOverlaps: boolean = true, insertGaps: boolean = true, sort: boolean = true): IRegistration[] {
     let registrationArray: IRegistration[] = [];
 
     for (let inputString of input) {
@@ -39,6 +39,16 @@ export function formatRegistrations(input: Array<string>, insertOverlaps: boolea
     // Find and insert gaps
     if (insertGaps) {
         registrationArray = insertGapsToArray(registrationArray);
+    }
+
+    if (sort) {
+        // Sort the timeRanges arrays for all objects in the registrationArray
+        registrationArray.forEach(registration => {
+            registration.timeRanges.sort((a, b) => a.startTime - b.startTime);
+        });
+
+        // Now sort the registrationArray based on the earliest startTime in each timeRanges
+        return registrationArray.sort((a, b) => a.timeRanges[0].startTime - b.timeRanges[0].startTime);
     }
 
 

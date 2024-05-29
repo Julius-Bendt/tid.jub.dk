@@ -40,14 +40,8 @@ export const useRegistrationStore = defineStore('registrationStore', () => {
     const registrationLines = registrationsText.split(/\r?\n/)
 
     // Format registrations and handle errors
-    registrationArray.value = formatRegistrations(registrationLines).sort((a, b) => {
+    registrationArray.value = formatRegistrations(registrationLines);
 
-      a.timeRanges = a.timeRanges.sort((aa, bb) => aa.startTime - bb.startTime); // Sort time ranges
-      return a.timeRanges[0].startTime - b.timeRanges[0].startTime // Show earliest first
-    });
-
-
-    // Remove duplicate errors
     saveToStorage(registrationsText)
   }
 

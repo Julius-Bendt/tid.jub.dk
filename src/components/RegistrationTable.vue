@@ -68,7 +68,7 @@ function getTimePeriods(registration: IRegistration): string {
     ranges.push(`${start}-${end}`)
   })
 
-  return ranges.reverse().join(', ')
+  return ranges.join(', ')
 }
 
 function clickRegistration(registration: IRegistration) {
