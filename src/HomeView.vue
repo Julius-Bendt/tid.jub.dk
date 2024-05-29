@@ -25,7 +25,7 @@ Data forlader aldrig browseren og sendes ikke til nogen server. Alle beregninger
           <p class="mb-2">
             🕐Timer Totalt:
             <span class="font-bold">
-              {{ calculateTotalTime(registrationStore.registrationsArray) }}
+              {{ calculateTotalTime(registrationStore.registrationArray) }}
             </span>
           </p>
           <a class="text-primary" href="#" @click="openModal" v-if="modalRef != null"
@@ -34,7 +34,7 @@ Data forlader aldrig browseren og sendes ikke til nogen server. Alle beregninger
         </div>
 
         <RegistrationTable
-          :registrations="registrationStore.registrationsArray"
+          :registrations="registrationStore.registrationArray"
           @registrationClicked="registrationClicked"
         />
       </div>
@@ -48,11 +48,12 @@ import { useRegistrationStore } from '@/stores/RegistrationStore'
 
 import { ref, nextTick } from 'vue'
 import type { IRegistration } from '@/interfaces'
-import { calculateTotalTime, loadFromStorage, debounce } from '@/helpers'
+import { calculateTotalTime, debounce } from '@/helpers'
 
 import RegistrationTable from '@/components/RegistrationTable.vue'
 import FooterNav from '@/components/FooterNav.vue'
 import HistoricalRegistrationModal from '@/components/historical/HistoricalRegistrationModal.vue'
+import { loadFromStorage } from './services'
 
 const registrationStore = useRegistrationStore()
 
