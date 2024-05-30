@@ -73,12 +73,8 @@ function debounceHelper() {
 }
 
 function registrationClicked(input: IRegistration) {
-  const registration: IRegistration = registrationStore.formattedRegistrations.get(
-    input.letter
-  ) as IRegistration
-
   // I did not expect this to work without modifying the map itself. apparently it does indeed update.
-  registration.clicked = !registration.clicked
+  input.clicked = !input.clicked
 }
 
 function openModal() {
