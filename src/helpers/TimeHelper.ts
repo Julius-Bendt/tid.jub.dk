@@ -151,8 +151,8 @@ export function findGaps(registrations: IRegistration[]): ITimeRange[] {
     });
 
     // Sort all time ranges by start time
-    const sortedTimeRanges = [...allTimeRanges];
-    sortedTimeRanges.sort((a, b) => a.startTime - b.startTime);
+    const sortedTimeRanges = [...allTimeRanges]
+        .sort((a, b) => a.startTime - b.startTime);
 
     // Find gaps between all time ranges and their insertion indexes
     const gaps: ITimeRange[] = [];
