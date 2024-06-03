@@ -21,7 +21,7 @@ export function searchLocalStorage(searchTerm: string): ISearchItem[] {
                 const letter = letterMatch ? letterMatch[1] : null;
 
                 // Include registration, if search term matches
-                if (datum.includes(searchTerm) && letter) {
+                if (datum.toLowerCase().includes(searchTerm.toLowerCase()) && letter) {
                     lettersToInclude.push(letter);
                     return true;
                 }
