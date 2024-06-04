@@ -3,9 +3,9 @@
     <thead class="text-xs text-text uppercase bg-gray-800">
       <tr>
         <th scope="col" class="w-1/12 px-6 py-3">ID</th>
-        <th scope="col" class="w-1/12 px-6 py-3">Periode</th>
+        <th scope="col" class="w-3/12 px-6 py-3">Periode</th>
         <th scope="col" class="w-1/12 px-6 py-3">Tid</th>
-        <th scope="col" class="w-9/12 px-6 py-3">Beskrivelse</th>
+        <th scope="col" class="w-7/12 px-6 py-3">Beskrivelse</th>
       </tr>
     </thead>
     <tbody>
