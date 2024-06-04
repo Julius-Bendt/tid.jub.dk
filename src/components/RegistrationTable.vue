@@ -2,10 +2,10 @@
   <table class="w-full text-sm text-left text-gray-500 rounded-md overflow-hidden">
     <thead class="text-xs text-text uppercase bg-gray-800">
       <tr>
-        <th scope="col" class="px-6 py-3">ID</th>
-        <th scope="col" class="px-6 py-3">Periode</th>
-        <th scope="col" class="px-6 py-3">Tid</th>
-        <th scope="col" class="px-6 py-3">Beskrivelse</th>
+        <th scope="col" class="w-1/12 px-6 py-3">ID</th>
+        <th scope="col" class="w-1/12 px-6 py-3">Periode</th>
+        <th scope="col" class="w-1/12 px-6 py-3">Tid</th>
+        <th scope="col" class="w-9/12 px-6 py-3">Beskrivelse</th>
       </tr>
     </thead>
     <tbody>
@@ -22,23 +22,25 @@
             !registration.showAsWarning
         }"
       >
-        <th scope="row" class="px-6 py-4 font-bold">
+        <th scope="row" class="w-1/12 px-6 py-4 font-bold">
           {{ registration.showAsWarning ? '' : registration.letter }}
         </th>
-        <td class="px-6 py-4">
+        <td class="w-1/12 px-6 py-4">
           {{ getTimePeriods(registration) }}
         </td>
-        <td class="px-6 py-4">
+        <td class="w-1/12 px-6 py-4">
           {{ calculateTotalTimeForRegistration(registration) / 60 }}
         </td>
-        <td class="px-6 py-4 flex flex-col">
-          <p>{{ registration.description }}</p>
-          <span v-for="(error, i) in registration.errors" :key="i" class="text-red-600"
-            >{{ error }}
-          </span>
-          <span v-for="(warning, i) in registration.warnings" :key="i" class="text-yellow-600"
-            >{{ warning }}
-          </span>
+        <td class="w-9/12 px-6 py-4">
+          <div class="flex flex-col w-full">
+            <p class="break-all w-full">{{ registration.description }}</p>
+            <span v-for="(error, i) in registration.errors" :key="i" class="text-red-600"
+              >{{ error }}
+            </span>
+            <span v-for="(warning, i) in registration.warnings" :key="i" class="text-yellow-600"
+              >{{ warning }}
+            </span>
+          </div>
         </td>
       </tr>
     </tbody>

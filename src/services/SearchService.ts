@@ -45,5 +45,6 @@ export function searchLocalStorage(searchTerm: string): ISearchItem[] {
 
     });
 
-    return items;
+    // Convert date string to Date object, then return the newest time as first
+    return items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
