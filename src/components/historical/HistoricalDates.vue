@@ -15,10 +15,21 @@
 
 <script setup lang="ts">
 import { loadDatesFromLocalStorage } from '@/services'
+import { ref } from 'vue'
 
 const emit = defineEmits(['clickedDate'])
 
-const sortedDates = sortDatesDescending(loadDatesFromLocalStorage())
+defineExpose({
+  loadData
+})
+
+const sortedDates = ref<any[]>([])
+loadData()
+
+function loadData() {
+  sortedDates.value = sortDatesDescending(loadDatesFromLocalStorage())
+  console.log('Loaded data ' + sortedDates.value.length)
+}
 
 function dateClicked(date: string) {
   emit('clickedDate', date)
