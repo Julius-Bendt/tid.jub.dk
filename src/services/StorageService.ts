@@ -1,7 +1,7 @@
-const CACHE_KEY = "TIME_REGISTER_CACHE";
+export const CACHE_KEY = "TIME_REGISTER_CACHE";
 
 export function loadFromStorage(date: string | undefined = undefined) {
-    const cacheKey = date == undefined ? CACHE_KEY : `${date}_${CACHE_KEY}`.replace(/-/g, "_");;
+    const cacheKey = date == undefined ? CACHE_KEY : `${date}_${CACHE_KEY}`.replace(/-/g, "_");
     return localStorage.getItem(cacheKey) ?? "";
 }
 
