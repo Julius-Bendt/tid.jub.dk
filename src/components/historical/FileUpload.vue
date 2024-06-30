@@ -19,10 +19,10 @@
           />
         </svg>
         <span class="font-medium" v-if="file === undefined">
-          Drop file to import, or
+          Slip fil for at importere, eller
           <span class="text-primary underline">browse</span>
         </span>
-        <span class="font-medium" v-else> Selected {{ file.name }} </span>
+        <span class="font-medium" v-else> Valgt {{ file.name }} </span>
       </span>
       <input type="file" name="file_upload" class="hidden" @change="doTheImporting" />
     </label>
@@ -32,6 +32,7 @@
 <script lang="ts" setup>
 import { importRegistrations } from '@/services'
 import { ref } from 'vue'
+import { useToast } from 'vue-toast-notification'
 
 const file = ref<File | undefined>(undefined)
 const emit = defineEmits(['importDone'])
@@ -45,8 +46,9 @@ async function doTheImporting(event: Event) {
   file.value = input.files[0]
 
   if (file.value.type !== 'application/json') {
-    //TODO: Show toast
-    console.log('WRONG FILE TYPE')
+    const $toast = useToast()
+    $toast.clear()
+    $toast.error(`filen ${file.value.name} er ikke en gyldig filtype`)
     return
   }
 

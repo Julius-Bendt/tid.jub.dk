@@ -28,7 +28,6 @@ loadData()
 
 function loadData() {
   sortedDates.value = sortDatesDescending(loadDatesFromLocalStorage())
-  console.log('Loaded data ' + sortedDates.value.length)
 }
 
 function dateClicked(date: string) {

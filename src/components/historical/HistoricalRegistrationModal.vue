@@ -31,13 +31,13 @@
                 @click="setImport(!importing)"
                 class="bg-transparent hover:bg-primary font-semibold py-2 px-4 border border-primary hover:border-transparent rounded transition-colors"
               >
-                {{ importing ? 'Stop importing' : 'Import' }}
+                {{ importing ? 'Stop importing' : 'Impoter' }}
               </button>
               <button
                 @click="exportClicked"
                 class="bg-transparent hover:bg-primary font-semibold py-2 px-4 border border-primary hover:border-transparent rounded transition-colors"
               >
-                Export
+                Eksporter
               </button>
             </div>
           </header>
