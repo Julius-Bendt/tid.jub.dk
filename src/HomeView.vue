@@ -17,6 +17,8 @@ Indsæt opgaver i følgende format: (fra)hhmm-(til)hhmm: {ID} - {beskrivelse af 
 Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til clipboardet
 
 Data forlader aldrig browseren og sendes ikke til nogen server. Alle beregninger sker lokalt i din browser. We all 'bout that privacy! 🔒'
+
+Vær opmærksom på, at denne side benytter sig af Plausible, som er et privat og anonymt statistikværktøj. Læs mere på https://plausible.io/privacy-policy
 "
         ></textarea>
       </div>
