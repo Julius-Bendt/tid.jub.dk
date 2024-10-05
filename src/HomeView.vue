@@ -18,7 +18,7 @@ Husk du kan klikke på en besked under 'formatteret' for at kopiere denne til cl
 
 Data forlader aldrig browseren og sendes ikke til nogen server. Alle beregninger sker lokalt i din browser. We all 'bout that privacy! 🔒'
 
-Vær opmærksom på, at denne side benytter sig af Plausible, som er et privat og anonymt statistikværktøj. Læs mere på https://plausible.io/privacy-policy
+Vær opmærksom på, at denne side benytter sig af Plausible, som er et privat og anonymt statistikværktøj. Læs mere på analytics.wip.dk/privacy-policy
 "
         ></textarea>
       </div>
@@ -80,6 +80,7 @@ function registrationClicked(input: IRegistration) {
 }
 
 function openModal() {
+  // @ts-ignore
   modalRef?.value?.changeModalState(true)
 }
 </script>
